@@ -11,6 +11,15 @@ const ListaSeries = () => {
             .catch(error => console.log(error));
     }, []);
 
+    const deleteSerie = (id) => {
+        fetch(`https://peticiones.online/api/series/${id}`, {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(() => setSeries(series.filter(serie => serie.id !== id)))
+            .catch(error => console.log(error));
+    };
+
     return <div className="series">
         {series.map(serie => (
             <div key={serie.id} className="serie">
@@ -19,6 +28,7 @@ const ListaSeries = () => {
                 <img src={serie.image} alt={serie.title} />
                 <p>Puntuación: {serie.rating}</p>
                 <p>Canal: {serie.channel}</p>
+                <button onClick={() => deleteSerie(serie.id)}>Eliminar</button>
             </div>
         ))}
     </div>;
