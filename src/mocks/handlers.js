@@ -20,5 +20,22 @@ export const handlers = [
         return res(
             ctx.json({ success: true })
         );
+    }),
+    rest.delete('https://peticiones.online/api/series/:id', (req, res, ctx) => {
+        const { id } = req.params;
+        const serieIndex = series.findIndex(serie => serie.id === parseInt(id));
+
+        if (serieIndex !== -1) {
+            const deletedSerie = series.splice(serieIndex, 1)[0];
+            return res(
+                ctx.status(200),
+                ctx.json(deletedSerie)
+            );
+        } else {
+            return res(
+                ctx.status(404),
+                ctx.json({ error: "La serie que intentas borrar no existe" })
+            );
+        }
     })
 ]
