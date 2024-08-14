@@ -10,7 +10,6 @@ let series = [
         "image": "https://es.web.img3.acsta.net/pictures/19/03/22/10/08/5883111.jpg",
         "channel": "HBO"
     }
-    // Otras series...
 ];
 
 export const handlers = [
@@ -19,12 +18,32 @@ export const handlers = [
             ctx.json(series)
         );
     }),
+    rest.get('https://peticiones.online/api/series/:id', (req, res, ctx) => {
+        const { id } = req.params;
+        const serie = series.find(serie => serie.id === parseInt(id));
+    
+        if (serie) {
+            console.log('Serie recuperada por ID:', serie);  // Añade este log
+            return res(ctx.json(serie));
+        } else {
+            console.log('Serie no encontrada para ID:', id);  // Añade este log
+            return res(ctx.status(404), ctx.json({ error: "La serie que intentas recuperar no existe" }));
+        }
+    }),
     rest.post('https://peticiones.online/api/series', (req, res, ctx) => {
-        const newSerie = { id: series.length + 1, ...req.body };
+        const newSerie = { 
+            id: series.length + 1, 
+            ...req.body,
+            title: req.body.title || 'Nueva serie',
+            creator: req.body.creator || 'Desconocido',
+            rating: req.body.rating || 0,
+            dates: req.body.dates || 'Desconocido',
+            image: req.body.image || 'https://via.placeholder.com/150',
+            channel: req.body.channel || 'Desconocido'
+        };
         series.push(newSerie);
-        return res(
-            ctx.json({ success: true })
-        );
+        console.log('Nueva serie añadida:', newSerie);  // Añade este log
+        return res(ctx.json({ success: true, serie: newSerie }));
     }),
     rest.put('https://peticiones.online/api/series/:id', (req, res, ctx) => {
         const { id } = req.params;
