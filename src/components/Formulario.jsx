@@ -1,27 +1,38 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const Formulario = () => {
-
+const Formulario = ({ serieToEdit, onSuccess }) => {
     const [success, setSuccess] = useState(false);
-
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, reset } = useForm({
+        defaultValues: serieToEdit || {}
+    });
 
     const onSubmit = (data) => {
-        fetch('https://peticiones.online/api/series', {
-            method: 'POST',
+        const url = serieToEdit 
+            ? `https://peticiones.online/api/series/${serieToEdit.id}`
+            : 'https://peticiones.online/api/series';
+        const method = serieToEdit ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         })
             .then(response => response.json())
-            .then(json => setSuccess(true))
+            .then(json => {
+                setSuccess(true);
+                if (typeof onSuccess === 'function') {
+                    onSuccess();
+                }
+                reset();
+            })
             .catch(error => console.log(error));
     }
 
     return <div className="px-5 mt-5">
-        <h2>Nueva serie</h2>
+        <h2>{serieToEdit ? "Editar serie" : "Nueva serie"}</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-3">
                 <label className="form-label" htmlFor="inputTitle">Título</label>
@@ -47,11 +58,11 @@ const Formulario = () => {
                 <label className="form-label" htmlFor="inputChannel">Canal</label>
                 <input className="form-control" type="text" id="inputChannel" {...register('channel')} />
             </div>
-            <input className="btn btn-outline-info" type="submit" value="Crear serie" />
+            <input className="btn btn-outline-info" type="submit" value={serieToEdit ? "Actualizar serie" : "Crear serie"} />
         </form>
         {success && (
             <div className="alert alert-success mt-4" role="alert">
-                Se ha creado una nueva serie
+                {serieToEdit ? "Serie actualizada" : "Se ha creado una nueva serie"}
             </div>
         )}
     </div>;
