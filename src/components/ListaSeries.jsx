@@ -8,7 +8,10 @@ const ListaSeries = () => {
     useEffect(() => {
         fetch('https://peticiones.online/api/series')
             .then(response => response.json())
-            .then(json => setSeries(json))
+            .then(json => {
+                console.log('Series cargadas:', json); // Debug
+                setSeries(json);
+            })
             .catch(error => console.log(error));
     }, []);
 
@@ -17,18 +20,26 @@ const ListaSeries = () => {
             method: 'DELETE'
         })
             .then(response => response.json())
-            .then(() => setSeries(series.filter(serie => serie.id !== id)))
+            .then(() => {
+                console.log('Serie eliminada:', id); // Debug
+                setSeries(series.filter(serie => serie.id !== id));
+            })
             .catch(error => console.log(error));
     };
 
     const handleEdit = (serie) => {
+        console.log('Serie seleccionada para editar:', serie);  // Debug
         setSerieToEdit(serie);
     };
 
     const handleSuccess = () => {
+        console.log('handleSuccess llamado'); // Debug
         fetch('https://peticiones.online/api/series')
             .then(response => response.json())
-            .then(json => setSeries(json))
+            .then(json => {
+                console.log('Series actualizadas después de la edición:', json); // Debug
+                setSeries(json);
+            })
             .catch(error => console.log(error));
         setSerieToEdit(null);
     };

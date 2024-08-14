@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ListaSeries from '../components/ListaSeries';
 import Formulario from '../components/Formulario';
@@ -42,23 +42,17 @@ describe('ListaSeries test', () => {
     test('elimina una serie existente', async () => {
         render(<ListaSeries />);
 
-        // Verifica que la serie "Juego de Tronos" está en la lista inicialmente
         const seriesTitle = await screen.findByText('Juego de Tronos');
         expect(seriesTitle).toBeInTheDocument();
 
-        // Encuentra el contenedor de la serie específica
         const juegoDeTronosContainer = seriesTitle.closest('div');
-
-        // Selecciona el botón "Eliminar" dentro del contenedor de "Juego de Tronos"
         const deleteButton = within(juegoDeTronosContainer).getByRole('button', { name: /eliminar/i });
         userEvent.click(deleteButton);
 
-        // Verifica que la serie "Juego de Tronos" ya no esté en la lista
         await waitFor(() => {
             expect(screen.queryByText('Juego de Tronos')).not.toBeInTheDocument();
         });
 
-        // Verifica que la serie "Nueva serie" todavía está en la lista
         const remainingSeriesTitle = screen.getByText('Nueva serie');
         expect(remainingSeriesTitle).toBeInTheDocument();
     });

@@ -32,6 +32,7 @@ export const handlers = [
 
         if (serieIndex !== -1) {
             series[serieIndex] = { ...series[serieIndex], ...req.body };
+            console.log(`Serie actualizada: ${JSON.stringify(series[serieIndex])}`);
             return res(
                 ctx.json(series[serieIndex])
             );

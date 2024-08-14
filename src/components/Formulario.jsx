@@ -1,11 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 const Formulario = ({ serieToEdit, onSuccess }) => {
     const [success, setSuccess] = useState(false);
-    const { register, handleSubmit, reset } = useForm({
+    const { register, handleSubmit, reset, setValue } = useForm({
         defaultValues: serieToEdit || {}
     });
+
+    useEffect(() => {
+        if (serieToEdit) {
+            setValue('title', serieToEdit.title);
+            setValue('creator', serieToEdit.creator);
+            setValue('rating', serieToEdit.rating);
+            setValue('dates', serieToEdit.dates);
+            setValue('image', serieToEdit.image);
+            setValue('channel', serieToEdit.channel);
+        }
+    }, [serieToEdit, setValue]);
 
     const onSubmit = (data) => {
         const url = serieToEdit 
@@ -22,6 +33,7 @@ const Formulario = ({ serieToEdit, onSuccess }) => {
         })
             .then(response => response.json())
             .then(json => {
+                console.log('Respuesta de la API:', json);  // Debug
                 setSuccess(true);
                 if (typeof onSuccess === 'function') {
                     onSuccess();
