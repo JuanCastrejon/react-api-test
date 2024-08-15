@@ -2,6 +2,8 @@ import { render, screen, fireEvent, waitFor, within } from "@testing-library/rea
 import userEvent from "@testing-library/user-event"; // Importa userEvent
 import ListaSeries from '../components/ListaSeries';
 import Formulario from '../components/Formulario';
+import { server } from '../mocks/server'; // Asegúrate de que la ruta sea correcta
+import { rest } from 'msw';
 
 describe('ListaSeries test', () => {
 
@@ -89,5 +91,33 @@ describe('ListaSeries test', () => {
     
         // Verifica que los detalles ya no se muestren
         expect(screen.queryByText(`Título: ${serieTitleText}`)).not.toBeInTheDocument();
+    });
+
+    test('muestra un mensaje de error cuando se intenta obtener una serie que no existe', async () => {
+        // Sobrescribe el handler para simular un error 404
+        server.use(
+            rest.get('https://peticiones.online/api/series/:id', (req, res, ctx) => {
+                return res(
+                    ctx.status(404),
+                    ctx.json({ error: "La serie que intentas recuperar no existe" })
+                )
+            })
+        );
+    
+        render(<ListaSeries />);
+    
+        // Espera a que se cargue cualquier serie
+        const serieTitle = await screen.findByRole('heading', { level: 2 });
+    
+        // Simula el clic en el botón "Ver detalles"
+        const viewDetailsButton = screen.getByRole('button', { name: /Ver detalles/i });
+        userEvent.click(viewDetailsButton);
+    
+        // Espera a que aparezca el mensaje de error
+        const errorMessage = await screen.findByText('La serie no existe');
+        expect(errorMessage).toBeInTheDocument();
+    
+        // Verifica que no se muestren los detalles de la serie
+        expect(screen.queryByText(/Título:/)).not.toBeInTheDocument();
     });
 });

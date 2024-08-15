@@ -5,10 +5,11 @@ const ListaSeries = () => {
     const [series, setSeries] = useState([]);
     const [serieToEdit, setSerieToEdit] = useState(null);
     const [selectedSerie, setSelectedSerie] = useState(null);
+    const [error, setError] = useState(null);
 
     const handleViewDetails = (id) => {
         getSerieById(id);
-    };
+    };  
 
     useEffect(() => {
         fetch('https://peticiones.online/api/series')
@@ -17,25 +18,28 @@ const ListaSeries = () => {
                 console.log('Series cargadas en ListaSeries:', json); // Verifica las series cargadas
                 setSeries(json);
             })
-            .catch(error => console.log('Error al cargar las series:', error));
     }, []);   
-    
+
     const getSerieById = (id) => {
         fetch(`https://peticiones.online/api/series/${id}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Serie no encontrada');
+                    if (response.status === 404) {
+                        throw new Error('La serie no existe');
+                    }
+                    throw new Error('Error en la petición');
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Serie recuperada:', data); // Debug
+                console.log('Serie recuperada:', data);
                 setSelectedSerie(data);
+                setError(null);
             })
             .catch(error => {
                 console.error('Error al recuperar la serie:', error);
                 setSelectedSerie(null);
-                setError('No se pudo recuperar la serie. Por favor, inténtalo de nuevo.');
+                setError(error.message);
             });
     };
 
@@ -70,6 +74,7 @@ const ListaSeries = () => {
 
     return (
         <div className="series">
+            {error && <div className="error-message">{error}</div>}
             {series.map(serie => (
                 <div key={serie.id} className="serie">
                     <h2>{serie.title}</h2>
