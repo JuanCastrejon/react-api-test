@@ -1,7 +1,6 @@
-// test/specs/formulario.e2e.js
 describe('Formulario E2E Test', () => {
     it('debería crear una nueva serie', () => {
-        browser.url('http://localhost:3000'); // Cambia la URL según tu configuración
+        browser.url('http://localhost:3000'); 
 
         const inputTitle = $('#inputTitle');
         const inputCreator = $('#inputCreator');

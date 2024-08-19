@@ -1,4 +1,3 @@
-// test/specs/listaSeries.e2e.js
 describe('ListaSeries E2E Test', () => {
     it('debería cargar las imágenes de las series', () => {
         browser.url('http://localhost:3000');
