@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      chrome:
+      selenium:
         image: selenium/standalone-chrome
         ports:
           - 4444:4444
@@ -40,3 +40,5 @@ jobs:
 
       - name: Run E2E tests
         run: npx wdio run wdio.conf.js
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
