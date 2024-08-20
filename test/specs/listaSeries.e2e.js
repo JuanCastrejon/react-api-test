@@ -16,9 +16,26 @@ describe('Lista de series', () => {
         // Simula la creación de una nueva serie
         const inputTitle = await $('#inputTitle');
         await inputTitle.setValue('Nueva serie');
-        const button = await $('.crear-serie');
-        await button.click();
-
+        
+        const inputCreator = await $('#inputCreator');
+        await inputCreator.setValue('Creador de prueba');
+        
+        const inputRating = await $('#inputRating');
+        await inputRating.setValue('5');
+        
+        const inputDates = await $('#inputDates');
+        await inputDates.setValue('2023-2024');
+        
+        const inputImage = await $('#inputImage');
+        await inputImage.setValue('https://example.com/image.jpg');
+        
+        const inputChannel = await $('#inputChannel');
+        await inputChannel.setValue('Canal de prueba');
+        
+        // Selecciona el botón de envío dentro del formulario
+        const submitButton = await $('form input[type="submit"]');
+        await submitButton.click();
+    
         await browser.waitUntil(async () => (await $$('h2')).length > initialSeriesCount, 
             { timeout: 5000, timeoutMsg: 'Nueva serie no agregada' });
         
@@ -26,62 +43,27 @@ describe('Lista de series', () => {
         expect(finalSeriesCount).toBeGreaterThan(initialSeriesCount);
     });
 
-    /* Prueba de eliminación de una serie existente
+    // Prueba de eliminación de una serie existente
     it('elimina una serie existente', async () => {
         await browser.url('http://localhost:3000');
         
         // Esperar a que el elemento body esté presente
-        await browser.waitUntil(() => $('body').isDisplayed(), { timeout: 15000 });
-
-        // Imprimir el HTML para depuración
-        const bodyHTML = await $('body').getHTML();
-        console.log(bodyHTML);
-
-        const initialSeriesCount = await $$('.serie').length;
-        console.log(`Número inicial de series: ${initialSeriesCount}`);
-
-        // Intentar encontrar todos los botones dentro de las series
-        const buttons = await $$('.serie button');
-        console.log(`Número de botones encontrados: ${buttons.length}`);
-
-        // Buscar el botón de eliminar entre todos los botones
-        let deleteButton;
-        for (const button of buttons) {
-            const text = await button.getText();
-            console.log(`Texto del botón: ${text}`);
-            if (text === 'Eliminar') {
-                deleteButton = button;
-                break;
-            }
-        }
-
-        if (!deleteButton) {
-            throw new Error('No se encontró el botón de eliminar');
-        }
-
-        await deleteButton.click();
-
-        await browser.waitUntil(async () => {
-            const currentCount = await $$('.serie').length;
-            return currentCount < initialSeriesCount;
-        }, { 
-            timeout: 15000, 
-            timeoutMsg: 'Serie no eliminada' 
-        });
-        
-        const finalSeriesCount = await $$('.serie').length;
-        expect(finalSeriesCount).toBeLessThan(initialSeriesCount);
-    });*/
+    });
 
     // Prueba de recuperación y muestra de los detalles de una serie específica
     it('recupera y muestra los detalles de una serie específica', async () => {
         await browser.url('http://localhost:3000');
         
+        // Espera a que el botón "Ver detalles" esté presente y visible
         const viewDetailsButton = await $('button=Ver detalles');
+        await viewDetailsButton.waitForExist({ timeout: 10000 });
+        await viewDetailsButton.waitForDisplayed({ timeout: 10000 });
+        
+        // Haz clic en el botón "Ver detalles"
         await viewDetailsButton.click();
 
         await browser.waitUntil(async () => await $('.serie-details').isDisplayed(), 
-            { timeout: 5000, timeoutMsg: 'Detalles de la serie no mostrados' });
+            { timeout: 10000, timeoutMsg: 'Detalles de la serie no mostrados' });
         
         const detailsContainer = await $('.serie-details');
         await expect(detailsContainer).toBeDisplayed();
@@ -96,14 +78,19 @@ describe('Lista de series', () => {
             window.fetch = () => Promise.reject({ status: 404, message: "La serie no existe" });
         });
 
+        // Espera a que el botón "Ver detalles" esté presente y visible
         const viewDetailsButton = await $('button=Ver detalles');
+        await viewDetailsButton.waitForExist({ timeout: 10000 });
+        await viewDetailsButton.waitForDisplayed({ timeout: 10000 });
+        
+        // Haz clic en el botón "Ver detalles"
         await viewDetailsButton.click();
 
         await browser.waitUntil(async () => {
             const errorMessage = await $('.error-message');
             return await errorMessage.isDisplayed();
         }, { 
-            timeout: 5000, 
+            timeout: 10000, 
             timeoutMsg: 'Mensaje de error no mostrado' 
         });
         

@@ -95,7 +95,6 @@ const ListaSeries = () => {
     return (
         <div className="series">
             {error && <div className="error-message">{error}</div>}
-            <button className="crear-serie">Crear serie</button>
             {series.map(serie => (
                 <div key={serie.id} className="serie">
                     <h2>{serie.title}</h2>

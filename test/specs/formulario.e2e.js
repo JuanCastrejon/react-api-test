@@ -21,7 +21,11 @@ describe('Formulario de agregar series', () => {
 
         await button.click();
 
+        // Espera a que la alerta de éxito esté presente y visible
         const successAlert = await $('.alert-success');
+        await successAlert.waitForExist({ timeout: 10000 });
+        await successAlert.waitForDisplayed({ timeout: 10000 });
+
         await expect(successAlert).toBeDisplayed();
     });
 
