@@ -15,7 +15,7 @@ const ListaSeries = () => {
         fetch('https://peticiones.online/api/series')
             .then(response => response.json())
             .then(json => {
-                console.log('Series cargadas en ListaSeries:', json); // Verifica las series cargadas
+                console.log('Series cargadas en ListaSeries:', json);
                 setSeries(json);
             })
     }, []);   
@@ -47,25 +47,26 @@ const ListaSeries = () => {
         fetch(`https://peticiones.online/api/series/${id}`, {
             method: 'DELETE'
         })
-            .then(response => response.json())
-            .then(() => {
-                console.log('Serie eliminada:', id); // Debug
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al eliminar la serie');
+                }
                 setSeries(series.filter(serie => serie.id !== id));
             })
             .catch(error => console.log(error));
     };
 
     const handleEdit = (serie) => {
-        console.log('Serie seleccionada para editar:', serie);  // Debug
+        console.log('Serie seleccionada para editar:', serie);
         setSerieToEdit(serie);
     };
 
     const handleSuccess = () => {
-        console.log('handleSuccess llamado'); // Debug
+        console.log('handleSuccess llamado');
         fetch('https://peticiones.online/api/series')
             .then(response => response.json())
             .then(json => {
-                console.log('Series actualizadas después de la edición:', json); // Debug
+                console.log('Series actualizadas después de la edición:', json);
                 setSeries(json);
             })
             .catch(error => console.log(error));
@@ -83,10 +84,13 @@ const ListaSeries = () => {
                     <p>Puntuación: {serie.rating}</p>
                     <p>Canal: {serie.channel}</p>
                     <button onClick={() => deleteSerie(serie.id)}>Eliminar</button>
-                    <button onClick={() => handleEdit(serie)}>Editar</button>
-                    <button onClick={() => handleViewDetails(serie.id)}>Ver detalles</button>
-                    {serieToEdit && serieToEdit.id === serie.id && (
+                    {serieToEdit && serieToEdit.id === serie.id ? (
                         <Formulario serieToEdit={serieToEdit} onSuccess={handleSuccess} />
+                    ) : (
+                        <>
+                            <button onClick={() => handleEdit(serie)}>Editar</button>
+                            <button onClick={() => handleViewDetails(serie.id)}>Ver detalles</button>
+                        </>
                     )}
                 </div>
             ))}

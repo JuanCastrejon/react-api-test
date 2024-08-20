@@ -44,7 +44,9 @@
     "@wdio/mocha-framework": "^9.0.0",
     "@wdio/spec-reporter": "^9.0.0",
     "@wdio/visual-service": "^5.2.1",
+    "chromedriver": "^127.0.3",
     "msw": "^0.42.2",
+    "wdio-chromedriver-service": "^8.1.1",
     "wdio-wait-for": "^3.0.11"
   }
 }
